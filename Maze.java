@@ -69,7 +69,7 @@ class MazeTest
 			{0, 0, 0, 0, 0, 1, 0, 0, 0},
 		};
 
-		System.out.printf("mRows: %d\n", Maze.numRows(maze));
+		System.out.printf("Rows: %d\n", Maze.numRows(maze));
 		System.out.printf("Columns: %d\n", Maze.numColumns(maze));
 		Maze.print(maze);
 	}
