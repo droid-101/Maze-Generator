@@ -3,35 +3,46 @@ class MazeTest
 	public static void main(String [] arg)
 	{
 		int [][] maze = {
-			{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
-			{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
-			{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
-			{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
-			{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
-			{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
-			{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
-			{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
-			{0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
-			{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+			{0, 1, 0, 0, 0, 0, 0, 0, 0},
+			{0, 1, 1, 1, 1, 1, 0, 1, 0},
+			{0, 0, 0, 1, 0, 0, 1, 1, 0},
+			{0, 1, 1, 1, 0, 1, 1, 1, 0},
+			{0, 1, 0, 0, 1, 1, 0, 1, 0},
+			{0, 1, 1, 1, 1, 0, 1, 1, 0},
+			{0, 1, 0, 1, 1, 0, 1, 0, 0},
+			{0, 1, 1, 1, 0, 1, 1, 1, 0},
+			{0, 0, 0, 0, 0, 1, 0, 0, 0},
 		};
 
+		System.out.printf("Rows: %d\n", Maze.numRows(maze));
+		System.out.printf("Columns: %d\n", Maze.numColumns(maze));
 		Maze.print(maze);
 	}
 }
 
 class Maze
 {
+	public static int numRows(int [][] maze)
+	{
+		return maze.length;
+	}
+
+	public static int numColumns(int [][] maze)
+	{
+		return maze[0].length;
+	}
+
 	public static void print(int [][] maze)
 	{
-		for (int y = 0; y < maze.length; y++)
+		for (int row = 0; row < numRows(maze); row++)
 		{
-			for (int x = 0; x < maze[0].length; x++)
+			for (int column = 0; column < numColumns(maze); column++)
 			{
-				System.out.printf(" %d", maze[y][x]);
+				System.out.printf("%d", maze[row][column]);
 
-				if (x != maze[0].length - 1)
+				if (column != numColumns(maze) - 1)
 				{
-					System.out.print(" ");
+					System.out.print("  ");
 				}
 				else
 				{
