@@ -10,6 +10,31 @@ class GeneratorTest
 		stack.push(new Cell(7, 6));
 		stack.push(new Cell(2, 9));
 		stack.print();
+
+		int [][] maze = generateBlankMaze(10, 10);
+		Maze.print(maze);
+	}
+
+	public static int [][] generateBlankMaze(int rows, int columns)
+	{
+		if (rows <= 0 || columns <= 0)
+		{
+			System.out.printf("ERROR: Invalid maze dimensions [%d, %d]", rows, columns);
+			return null;
+		}
+
+		int [][] maze = new int[rows][columns];
+
+		// initialize maze with zeros
+		for (int row = 0; row < Maze.numRows(maze); row++)
+		{
+			for (int column = 0; column < Maze.numColumns(maze); column++)
+			{
+				maze[row][column] = 0;
+			}
+		}
+
+		return maze;
 	}
 }
 
