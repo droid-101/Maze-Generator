@@ -1,57 +1,94 @@
+import java.util.Scanner;
+
 class GeneratorTest
 {
 	public static void main(String [] arg)
 	{
-		// Stack stack = new Stack();
-		// stack.print();
-		// stack.push(new Cell(4, 6));
-		// stack.push(new Cell(7, 6));
-		// stack.push(new Cell(2, 9));
-		// stack.print();
-		// Cell last = stack.pop();
-		// System.out.println(last.row);
-		// System.out.println(last.column);
-		// stack.pop();
-		// stack.pop();
-		// stack.print();
-		// stack.print();
-
-		int [][] maze = Generator.generateMaze(16, 16);
+		int [][] maze = Generator.generateMaze(10, 10, false);
+		Maze.print(maze);
 	}
 }
 
 class Generator
 {
-	public static int [][] generateMaze(int rows, int columns)
+	private static final int NORTH = 0;
+	private static final int EAST = 1;
+	private static final int SOUTH = 2;
+	private static final int WEST = 3;
+	private static final int DONE = -1;
+
+	private static final String [] directionNames = {"NORTH", "EAST", "SOUTH", "WEST"};
+
+	public static int [][] generateMaze(int rows, int columns, boolean step)
 	{
 		int [][] maze = generateBlankMaze(rows, columns);
 		Stack stack = new Stack();
-
 		int row = 1;
 		int column = 1;
-		int direction = 0;
-		Cell lastCell = null;
+		int direction = NORTH;
+		int returnDirection = NORTH;
 
-		for (int i = 0; i < 20000; i++)
+		Scanner wait = new Scanner(System.in);
+
+		stack.push(new Cell(row, column, NORTH));
+		maze[row][column] = 1;
+
+		while (stack.size() > 0)
 		{
-			if (validDirection(maze, row, column))
+			row = stack.peek().row;
+			column = stack.peek().column;
+			direction = chooseRandomDirection(stack.peek().next);
+			maze[row][column] = 2;
+
+			if (direction == DONE)
 			{
+				stack.pop();
 				maze[row][column] = 1;
-				Maze.print(maze);
+				continue;
 			}
-			else
+
+			switch (direction)
 			{
-				lastCell = stack.pop();
-				row = lastCell.row;
-				column = lastCell.column;
+				case NORTH:
+					row -= 1;
+					returnDirection = SOUTH;
+					break;
+
+				case EAST:
+					column += 1;
+					returnDirection = WEST;
+					break;
+
+				case SOUTH:
+					row += 1;
+					returnDirection = NORTH;
+					break;
+
+				case WEST:
+					column -= 1;
+					returnDirection = EAST;
+					break;
 			}
 
-			stack.push(new Cell(row, column));
-			direction = chooseRandomDirection();
-			printDirection(direction);
+			if (!validDirection(maze, row, column))
+			{
+				row = stack.peek().row;
+				column = stack.peek().column;
+				stack.peek().next[direction] = true;
+				continue;
+			}
 
-			row = applyDirectionRow(direction, row);
-			column = applyDirectionColumn(direction, column);
+			stack.peek().next[direction] = true;
+			stack.push(new Cell(row, column, returnDirection));
+
+			if (step)
+			{
+				Maze.print(maze);
+				wait.nextLine();
+				// System.out.printf("(%d, %d) Stack: %d, NORTH: %b, EAST: %b, SOUTH: %b, WEST: %b\n", stack.peek().row, stack.peek().column, stack.size(), stack.peek().next[NORTH], stack.peek().next[EAST], stack.peek().next[SOUTH], stack.peek().next[WEST]);
+			}
+
+			maze[row][column] = 1;
 		}
 
 		return maze;
@@ -61,71 +98,17 @@ class Generator
 	{
 		if (outsideBorder(maze, row, column))
 		{
-			System.out.println("OUTSIDE BORDER");
+			// System.out.println("OUTSIDE BORDER");
 			return false;
 		}
 
-		// if (alreadyVisited(maze, row, column))
-		// {
-		// 	System.out.println("ALREADY VISITED");
-		// 	return false;
-		// }
-
 		if (isDestructive(maze, row, column))
 		{
-			System.out.println("IS DESTRUCTIVE");
+			// System.out.println("IS DESTRUCTIVE");
 			return false;
 		}
 
 		return true;
-	}
-
-	private static void printDirection(int direction)
-	{
-		switch (direction)
-		{
-			case 0:
-				System.out.println("RIGHT");
-				break;
-			case 1:
-				System.out.println("DOWN");
-				break;
-			case 2:
-				System.out.println("LEFT");
-				break;
-			case 3:
-				System.out.println("UP");
-				break;
-		}
-	}
-
-	private static int applyDirectionRow(int direction, int row)
-	{
-		if (direction == 1)
-		{
-			return row + 1;
-		}
-
-		if (direction == 3)
-		{
-			return row - 1;
-		}
-
-		return row;
-	}
-
-	private static int applyDirectionColumn(int direction, int column)
-	{
-		if (direction == 0)
-		{
-			return column + 1;
-		}
-		else if (direction == 2)
-		{
-			return column - 1;
-		}
-
-		return column;
 	}
 
 	private static boolean outsideBorder(int [][] maze, int row, int column)
@@ -143,23 +126,8 @@ class Generator
 		return false;
 	}
 
-	private static boolean alreadyVisited(int [][] maze, int row, int column)
-	{
-		if (maze[row][column] != 0)
-		{
-			return true;
-		}
-
-		return false;
-	}
-
 	private static boolean isDestructive(int [][] maze, int row, int column)
 	{
-		if (maze[row][column] == 1)
-		{
-			return false;
-		}
-
 		int count = 0;
 
 		if (maze[row + 1][column] != 0)
@@ -207,75 +175,31 @@ class Generator
 		return maze;
 	}
 
-	private static int chooseRandomDirection()
+	private static int chooseRandomDirection(boolean [] next)
 	{
+		int visited = 0;
+
+		for (int i = 0; i < next.length; i++)
+		{
+			if (next[i] == true)
+			{
+				visited++;
+			}
+		}
+
+		if (visited == next.length)
+		{
+			return -1;
+		}
+
 		int random = 0;
 
 		do
 		{
 			random = (int)(Math.abs(100 * Math.random()));
 		}
-		while (random > 3);
+		while (random > 3 || next[random] == true);
 
 		return random;
-	}
-}
-
-class Cell
-{
-	public int row;
-	public int column;
-	public Cell previous;
-
-	Cell(int row, int column)
-	{
-		this.row = row;
-		this.column = column;
-		this.previous = null;
-	}
-}
-
-class Stack
-{
-	private Cell top;
-	private int size;
-
-	Stack()
-	{
-		top = null;
-		size = 0;
-	}
-
-	public void push(Cell nextCell)
-	{
-		nextCell.previous = top;
-		top = nextCell;
-		size++;
-	}
-
-	public Cell pop()
-	{
-		Cell nextCell = top;
-		top = nextCell.previous;
-		nextCell.previous = null;
-		size--;
-		return nextCell;
-	}
-
-	public void print()
-	{
-		if (top == null)
-		{
-			System.out.println("EMPTY STACK");
-			return;
-		}
-
-		Cell iterator = top;
-
-		while (iterator != null)
-		{
-			System.out.printf("Row: %d, Column %d\n", iterator.row, iterator.column);
-			iterator = iterator.previous;
-		}
 	}
 }
