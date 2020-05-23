@@ -5,7 +5,8 @@ class MasterClass
 {
     public static void main(String [] arg)
     {
-        int wallHeight = 2;
+        int wallHeight = 4;
+        int scaleFactor = 4;
 
         int [][] maze = Generator.generateMaze(20, 20, false);
 
@@ -20,9 +21,12 @@ class MasterClass
 
         Solver.check(maze);
 
+        int [][] finalMaze = new int [Maze.numRows(maze) * scaleFactor][Maze.numColumns(maze) * scaleFactor];
+        finalMaze = scale(maze, scaleFactor);
+
         try
         {
-            writeGenerate(maze, wallHeight);
+            writeGenerate(finalMaze, wallHeight);
         }
         catch (IOException e)
         {
@@ -31,7 +35,7 @@ class MasterClass
 
         try
         {
-            clear(maze, wallHeight);
+            clear(finalMaze, wallHeight);
         }
         catch (IOException e)
         {
@@ -84,5 +88,22 @@ class MasterClass
             }
         }
         clearWrite.close();
+    }
+
+    public static int [][] scale(int [][] oldMaze, int scaleFactor)
+    {
+        int [][] scaledMaze = new int [Maze.numRows(oldMaze) * scaleFactor][Maze.numColumns(oldMaze) * scaleFactor];
+
+        for (int i = 0; i < Maze.numRows(scaledMaze); i++)
+        {
+            for (int j = 0; j < Maze.numColumns(scaledMaze); j++)
+            {
+                for (int k = 0; k < scaleFactor; k++)
+                {
+                    scaledMaze[i][j] = oldMaze[i / scaleFactor][j / scaleFactor];
+                }
+            }
+        }
+        return scaledMaze;
     }
 }
