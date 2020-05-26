@@ -196,7 +196,7 @@ class Generator
 
 		do
 		{
-			random = (int)(Math.abs(100 * Math.random()));
+			random = (int)(Math.abs(10 * Math.random()));
 		}
 		while (random > 3 || next[random] == true);
 

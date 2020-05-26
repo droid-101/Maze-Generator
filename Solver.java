@@ -26,7 +26,7 @@ class Solver
     public static void check(int [][] maze)
     {
         int row = 0;
-        int col = 1;
+        int col = Maze.numColumns(maze) / 2 - 1;
         int [] currentBlock = new int[2];
         boolean end = false;
 

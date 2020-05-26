@@ -1,25 +1,43 @@
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Scanner;
 
 class MasterClass
 {
+    public static int x = 10000;
+    public static int z = 10000;
+    public static int wallHeight = 16;
+    public static int scaleFactor = 4;
+    public static String [] wallBlocks = {"stone_bricks", "mossy_cobblestone", "mossy_stone_bricks", "cracked_stone_bricks"};
+    public static String [] floorBlocks = {"stone_bricks", "chiseled_stone_bricks", "mossy_stone_bricks", "cracked_stone_bricks"};
+    public static int block = 0;
+    public static int random = 0;
+
     public static void main(String [] arg)
     {
-        int wallHeight = 4;
-        int scaleFactor = 4;
+        boolean perfectGeneration = false;
 
-        int [][] maze = Generator.generateMaze(20, 20, false);
+        // Scanner input = new Scanner(System.in);
+        // System.out.println("Enter the X coordinate.");
+        // x = input.nextInt();
+        // System.out.println("Enter the Z coordinate.");
+        // z = input.nextInt();
 
-        for (int i = Maze.numColumns(maze) - 1; i > 0; i--)
+        int [][] maze = Generator.generateMaze(21, 21, false);
+
+        while (perfectGeneration == false)
         {
-            if (maze[Maze.numRows(maze) - 2][i] != 0)
+            if (maze[Maze.numRows(maze) - 2][Maze.numColumns(maze) / 2] != 0 && maze[1][Maze.numColumns(maze) / 2] != 0 && maze[Maze.numRows(maze) / 2][Maze.numColumns(maze) - 2] != 0 && maze[Maze.numRows(maze) / 2][1] != 0)
             {
-                maze[Maze.numRows(maze) - 1][i] = 1;
-                i = 0;
+                maze[Maze.numRows(maze) - 1][Maze.numColumns(maze) / 2] = 1;
+                maze[0][Maze.numColumns(maze) / 2] = 1;
+                maze[Maze.numRows(maze) / 2][Maze.numColumns(maze) - 1] = 1;
+                maze[Maze.numRows(maze) / 2][0] = 1;
+                perfectGeneration = true;
             }
+            else
+            maze = Generator.generateMaze(21, 21, false);
         }
-
-        Solver.check(maze);
 
         int [][] finalMaze = new int [Maze.numRows(maze) * scaleFactor][Maze.numColumns(maze) * scaleFactor];
         finalMaze = scale(maze, scaleFactor);
@@ -27,15 +45,14 @@ class MasterClass
         try
         {
             writeGenerate(finalMaze, wallHeight);
-        }
-        catch (IOException e)
-        {
-            System.out.println("ERROR");
-        }
-
-        try
-        {
             clear(finalMaze, wallHeight);
+            clearAll(finalMaze, wallHeight);
+            Routines.dayTimeRoutine();
+            Routines.nightTimeRoutine();
+            Routines.wallsClosing();
+            Routines.wallsOpen();
+            Routines.wallsClosed();
+            Routines.wallsOpening();
         }
         catch (IOException e)
         {
@@ -47,25 +64,44 @@ class MasterClass
     public static void writeGenerate(int [][] maze, int wallHeight) throws IOException
     {
         String genData = null;
+        String floorData = null;
         FileWriter genWrite = null;
+        FileWriter floorWrite = null;
 
-        genWrite = new FileWriter("C:\\Users\\The Pintos\\Documents\\My Games\\Minecraft\\New Minecraft\\data\\.minecraft\\saves\\Maze Runner\\datapacks\\MazeRunner\\data\\maze\\functions\\generate.mcfunction");
+        genWrite = new FileWriter("C:\\Users\\The Pintos\\Documents\\My Games\\Minecraft\\New Minecraft\\data\\.minecraft\\saves\\Maze\\datapacks\\MazeRunner\\data\\maze\\functions\\generate.mcfunction");
+        floorWrite = new FileWriter("C:\\Users\\The Pintos\\Documents\\My Games\\Minecraft\\New Minecraft\\data\\.minecraft\\saves\\Maze\\datapacks\\MazeRunner\\data\\maze\\functions\\floor.mcfunction");
 
-        for (int k = 0; k < wallHeight; k++)
+        for (int k = -1; k < wallHeight; k++)
         {
-             for (int j = 0; j < Maze.numColumns(maze); j++)
+             for (int j = x; j < Maze.numColumns(maze) + x; j++)
             {
-                for (int i = 0; i < Maze.numRows(maze); i++)
+                for (int i = z; i < Maze.numRows(maze) + z; i++)
                 {
-                    if (maze[i][j] == 0)
+                    if (maze[i - z][j - x] == 0)
                     {
-                        genData = String.format("setblock %d %d %d minecraft:stone_bricks\n", j, k + 4, i);
+                        do
+                        {
+                            random = (int)(Math.abs(10 * Math.random()));
+                        }
+                        while (random > 3);
+
+                        genData = String.format("setblock %d %d %d minecraft:%s\n", j, k + 4, i, wallBlocks[random]);
                         genWrite.write(genData);
+                        genWrite.flush();
                     }
+                    do
+                    {
+                        random = (int)(Math.abs(10 * Math.random()));
+                    }
+                    while (random > 3);
+
+                    floorData = String.format("setblock %d %d %d minecraft:%s  \n", j, 3, i, floorBlocks[random]);
+                    floorWrite.write(floorData);
+                    floorWrite.flush();
                 }
             }
         }
-
+        floorWrite.close();
         genWrite.close();
     }
 
@@ -74,20 +110,68 @@ class MasterClass
         String clearData = null;
         FileWriter clearWrite = null;
 
-        clearWrite = new FileWriter("C:\\Users\\The Pintos\\Documents\\My Games\\Minecraft\\New Minecraft\\data\\.minecraft\\saves\\Maze Runner\\datapacks\\MazeRunner\\data\\maze\\functions\\clear.mcfunction");
+        clearWrite = new FileWriter("C:\\Users\\The Pintos\\Documents\\My Games\\Minecraft\\New Minecraft\\data\\.minecraft\\saves\\Maze\\datapacks\\MazeRunner\\data\\maze\\functions\\clear.mcfunction");
 
-        for (int k = 0; k < wallHeight; k++)
+        for (int k = -1; k < wallHeight; k++)
         {
-            for (int j = 0; j < Maze.numColumns(maze); j++)
+            for (int j = x; j < Maze.numColumns(maze) + x; j++)
             {
-                for (int i = 0; i < Maze.numRows(maze); i++)
+                for (int i = z; i < Maze.numRows(maze) + z; i++)
                 {
-                    clearData = String.format("setblock %d %d %d minecraft:air\n", j, k + 4, i);
-                    clearWrite.write(clearData);
+                    if (maze[i - z][j - x] == 0)
+                    {
+                        clearData = String.format("setblock %d %d %d minecraft:air\n", j, k + 4, i);
+                        clearWrite.write(clearData);
+                        clearWrite.flush();
+                    }
                 }
             }
         }
         clearWrite.close();
+    }
+
+    public static void clearAll(int [][] maze, int wallHeight) throws IOException
+    {
+        String clearAllData = null;
+        String clearTopData = null;
+        FileWriter clearAllWrite = null;
+        FileWriter clearTopWrite = null;
+
+        clearAllWrite = new FileWriter("C:\\Users\\The Pintos\\Documents\\My Games\\Minecraft\\New Minecraft\\data\\.minecraft\\saves\\Maze\\datapacks\\MazeRunner\\data\\maze\\functions\\clear_all.mcfunction");
+        clearTopWrite = new FileWriter("C:\\Users\\The Pintos\\Documents\\My Games\\Minecraft\\New Minecraft\\data\\.minecraft\\saves\\Maze\\datapacks\\MazeRunner\\data\\maze\\functions\\clear_top.mcfunction");
+
+        for (int k = -1; k < wallHeight + 4; k++)
+        {
+            for (int j = x; j < Maze.numColumns(maze) + x; j++)
+            {
+                for (int i = z; i < Maze.numRows(maze) + z; i++)
+                {
+                    if (k < 8)
+                    {
+                        if (k == -1)
+                        {
+                            clearAllData = String.format("setblock %d %d %d minecraft:grass_block\n", j, k + 4, i);
+                            clearAllWrite.write(clearAllData);
+                            clearAllWrite.flush();
+                        }
+                        else
+                        {
+                            clearAllData = String.format("setblock %d %d %d minecraft:air\n", j, k + 4, i);
+                            clearAllWrite.write(clearAllData);
+                            clearAllWrite.flush();
+                        }
+                    }
+                    else
+                    {
+                        clearTopData = String.format("setblock %d %d %d minecraft:air\n", j, k + 4, i);
+                        clearTopWrite.write(clearTopData);
+                        clearTopWrite.flush();
+                    }
+                }
+            }
+        }
+        clearTopWrite.close();
+        clearAllWrite.close();
     }
 
     public static int [][] scale(int [][] oldMaze, int scaleFactor)
