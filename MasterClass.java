@@ -53,6 +53,11 @@ class MasterClass
             Routines.wallsOpen();
             Routines.wallsClosed();
             Routines.wallsOpening();
+            Routines.dayStart();
+            Routines.nightStart();
+            Spawns.mobSpawns();
+            Routines.setup();
+            Routines.lateGame();
         }
         catch (IOException e)
         {
