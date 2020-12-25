@@ -13,7 +13,13 @@ class Routines
 
         lateGameWrite = new FileWriter("C:\\Users\\The Pintos\\Documents\\My Games\\Minecraft\\New Minecraft\\data\\.minecraft\\saves\\Maze\\datapacks\\MazeRunner\\data\\maze\\functions\\late_game.mcfunction");
 
-        lateGameCommands = String.format("summon minecraft:vindicator 209 2 208 {Attributes:[{Name:generic.maxHealth,Base:75}],Health:75.0f, ActiveEffects:[{Id:14,Amplifier:0,Duration:2147483}]}\n");
+        lateGameCommands = String.format("setblock 209 1 215 minecraft:redstone_block\n");
+        lateGameWrite.write(lateGameCommands);
+        lateGameCommands = String.format("difficulty normal\n");
+        lateGameWrite.write(lateGameCommands);
+        lateGameCommands = String.format("summon minecraft:vindicator 210 2 210 {CustomName: \"\\\"The Hunter\\\"\", Attributes:[{Name:generic.maxHealth,Base:75}],Health:75.0f, ActiveEffects:[{Id:14,Amplifier:0,Duration:2147483}]}\n");
+        lateGameWrite.write(lateGameCommands);
+        lateGameCommands = String.format("say The Hunter is here.\n");
         lateGameWrite.write(lateGameCommands);
         lateGameWrite.flush();
         lateGameWrite.close();
@@ -30,6 +36,10 @@ class Routines
         setupWrite.write(setupCommands);
         setupWrite.flush();
 
+        setupCommands = String.format("gamerule naturalRegeneration true\n");
+        setupWrite.write(setupCommands);
+        setupWrite.flush();
+
         setupCommands = String.format("time set 0\n");
         setupWrite.write(setupCommands);
         setupWrite.flush();
@@ -42,11 +52,11 @@ class Routines
         setupWrite.write(setupCommands);
         setupWrite.flush();
 
-        setupCommands = String.format("spawnpoint @a 209 2 208 \n");
+        setupCommands = String.format("spawnpoint @a 210 3 210 \n");
         setupWrite.write(setupCommands);
         setupWrite.flush();
 
-        setupCommands = String.format("setworldspawn 209 2 208 \n");
+        setupCommands = String.format("setworldspawn 210 3 210 \n");
         setupWrite.write(setupCommands);
         setupWrite.flush();
 
@@ -62,11 +72,19 @@ class Routines
         setupWrite.write(setupCommands);
         setupWrite.flush();
 
-        setupCommands = String.format("gamerule doMobLoot false\n");
+        setupCommands = String.format("gamerule doMobLoot true\n");
         setupWrite.write(setupCommands);
         setupWrite.flush();
 
-        setupCommands = String.format("tp @a 209.5 2 208.5\n");
+        setupCommands = String.format("tp @a 210 2 210\n");
+        setupWrite.write(setupCommands);
+        setupWrite.flush();
+
+        setupCommands = String.format("say There is only one rule.\n");
+        setupWrite.write(setupCommands);
+        setupWrite.flush();
+
+        setupCommands = String.format("say Don't build above the walls or in the maze.\n");
         setupWrite.write(setupCommands);
         setupWrite.flush();
 
@@ -82,6 +100,9 @@ class Routines
             setupWrite.write(setupCommands);
             setupWrite.flush();
         }
+
+        setupWrite.write("summon minecraft:mooshroom 109 4 33 {PersistenceRequired:1}\n");
+        setupWrite.flush();
         setupWrite.close();
     }
 
@@ -111,8 +132,6 @@ class Routines
         dayCommands = String.format("setblock 166 4 215 minecraft:air\n");
         dayTimeWrite.write(dayCommands);
         dayCommands = String.format("setblock 166 4 203 minecraft:redstone_block\n");
-        dayTimeWrite.write(dayCommands);
-        dayCommands = String.format("setblock 209 1 202 minecraft:redstone_block\n");
         dayTimeWrite.write(dayCommands);
         dayCommands = String.format("setblock 168 7 77 minecraft:redstone_block\n");
         dayTimeWrite.write(dayCommands);
@@ -158,7 +177,7 @@ class Routines
         nightTimeWrite.write(nightCommands);
         nightCommands = String.format("setblock 166 4 215 minecraft:redstone_block\n");
         nightTimeWrite.write(nightCommands);
-        nightCommands = String.format("setblock 209 1 202 minecraft:air\n");
+        nightCommands = String.format("setblock 209 1 215 minecraft:air\n");
         nightTimeWrite.write(nightCommands);
         nightCommands = String.format("setblock 168 7 77 minecraft:air\n");
         nightTimeWrite.write(nightCommands);

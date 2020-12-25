@@ -17,11 +17,11 @@ class MasterClass
     {
         boolean perfectGeneration = false;
 
-        // Scanner input = new Scanner(System.in);
-        // System.out.println("Enter the X coordinate.");
-        // x = input.nextInt();
-        // System.out.println("Enter the Z coordinate.");
-        // z = input.nextInt();
+        Scanner input = new Scanner(System.in);
+        System.out.println("Enter the X coordinate.");
+        x = input.nextInt();
+        System.out.println("Enter the Z coordinate.");
+        z = input.nextInt();
 
         int [][] maze = Generator.generateMaze(21, 21, false);
 

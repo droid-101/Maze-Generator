@@ -64,16 +64,16 @@ class Spawns
                     spawnWrite.flush();
                 }
 
-                if (random < 0.0005)
+                if (random < 0.05)
                 {
                     commands = String.format("summon minecraft:mooshroom %d 4 %d {PersistenceRequired:1}\n", x, z);
                     spawnWrite.write(commands);
                     spawnWrite.flush();
                 }
 
-                if (random < 0.05)
+                if (random < 1.15)
                 {
-                    commands = String.format("summon minecraft:vindicator %d 4 %d {PersistenceRequired:1, ActiveEffects:[{Id:14,Amplifier:0,Duration:100000,Ambient:0,ShowParticles:1}]}\n", x, z);
+                    commands = String.format("summon minecraft:cave_spider %d 4 %d {CustomName:\"\\\"The Beast\\\"\", Attributes:[{Name:generic.maxHealth,Base:75}],Health:75.0f, PersistenceRequired:1}\n", x, z);
                     spawnWrite.write(commands);
                     spawnWrite.flush();
                 }
@@ -82,4 +82,3 @@ class Spawns
         spawnWrite.close();
     }
 }
-
